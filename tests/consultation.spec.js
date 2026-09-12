@@ -34,11 +34,15 @@ test('consultation booking flow validates, fills and confirms', async ({ page })
   await nextToStep2.click({ force: true });
   await expect(modal.locator('#step-2')).toBeVisible();
 
-  // Step 2: Next is disabled until a date and a time are chosen.
+  // Step 2: Next is disabled until a date and a time are chosen. Time slots are randomised
+  // every time the step opens, so the chosen value is read back instead of hardcoded.
   const nextToReview = modal.locator('#next-to-step-3');
   await expect(nextToReview).toBeDisabled();
   await modal.locator('label[for="date-label-0"]').click();
   await modal.locator('label[for="time-label-0"]').click();
+  await expect(modal.locator('#date-label-0')).toBeChecked();
+  await expect(modal.locator('#time-label-0')).toBeChecked();
+  const chosenTime = await modal.locator('#time-label-0').inputValue();
   await expect(nextToReview).toBeEnabled();
   await nextToReview.click();
 
@@ -47,7 +51,7 @@ test('consultation booking flow validates, fills and confirms', async ({ page })
   await expect(modal.locator('#review-name')).toHaveText(user.name);
   await expect(modal.locator('#review-email')).toHaveText(user.email);
   await expect(modal.locator('#review-phone')).toHaveText(user.phone);
-  await expect(modal.locator('#review-datetime')).toContainText('09:00');
+  await expect(modal.locator('#review-datetime')).toContainText(chosenTime);
   await modal.locator('#confirm-step').click();
 
   // Step 4: confirmation.
