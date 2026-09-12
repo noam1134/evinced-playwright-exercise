@@ -1,0 +1,8 @@
+scan:
+  screenshots:
+    enabled: true
+report:
+  format: html
+  fileName: aggregatedReport
+  outputDir: ./evincedReports
+  aggregate: true
